@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import ProductAdd from "../components/ProductAdd";
 import ProductUpdate from "../components/ProductUpdate";
@@ -16,7 +16,7 @@ export default function Products() {
       const fetchCategories = async () => {
         const res = await fetch("/api/categories");
         const data = await res.json();
-        setCategories([{id: 0, name: 'All'}, ...data]);
+        setCategories([{ id: 0, name: "All" }, ...data]);
       };
       fetchCategories();
     } catch (error) {
@@ -29,8 +29,8 @@ export default function Products() {
       const fetchProducts = async () => {
         const res = await fetch("/api/products");
         const data = await res.json();
-        setProducts(data)
-        setFiltered(data); 
+        setProducts(data);
+        setFiltered(data);
       };
       fetchProducts();
     } catch (error) {
@@ -38,36 +38,49 @@ export default function Products() {
     }
   }, []);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = useCallback(async (id: number) => {
     try {
       await fetch(`/api/products/${id}`, {
         method: "DELETE",
       });
-      setProducts(products.filter((category) => category.id !== id));
+      setProducts((prev) => prev.filter((category) => category.id !== id));
+      setFiltered((prev) => prev.filter((category) => category.id !== id));
     } catch (error) {
       console.error("server error", error);
     }
-  };
+  }, []);
 
-  const handleUpdateProducts = async (id: number, updatedProduct: Products) => {
-    setFiltered((prev) =>
-      prev.map((product) =>
-        product.id === id 
-          ? { ...product, ...updatedProduct } 
-          : product
-      )
-    );
-  };
+  const handleUpdateProducts = useCallback(
+    async (id: number, updatedProduct: Products) => {
+      setFiltered((prev) =>
+        prev.map((product) =>
+          product.id === id ? { ...product, ...updatedProduct } : product
+        )
+      );
 
-  const handleFilter = async (category: Categories) => {
-    setSelected(category.id)
-    if(category.id === 0){
-      setFiltered(products)
-    } else{
-      setFiltered(products.filter((product) => product.categoryId === category.id ))
-    }
-  }
-  
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === id ? { ...product, ...updatedProduct } : product
+        )
+      );
+    },
+    [setFiltered, setProducts] // dependencies
+  );
+
+  const handleFilter = useCallback(
+    async (category: Categories) => {
+      setSelected(category.id);
+      if (category.id === 0) {
+        setFiltered(products);
+      } else {
+        setFiltered(
+          products.filter((product) => product.categoryId === category.id)
+        );
+      }
+    },
+    [products]
+  );
+
   return (
     <div
       className="relative flex h-auto min-h-screen w-full flex-col bg-gray-50 group/design-root overflow-x-hidden"
@@ -103,9 +116,10 @@ export default function Products() {
 
             {/* Add Product Button */}
             <ProductAdd
-              onAddProduct={(newProduct) =>
-                setFiltered((prev) => [newProduct, ...prev])
-              }
+              onAddProduct={(newProduct) => {
+                setProducts((prev) => [newProduct, ...prev]);
+                setFiltered((prev) => [newProduct, ...prev]);
+              }}
             />
           </div>
 

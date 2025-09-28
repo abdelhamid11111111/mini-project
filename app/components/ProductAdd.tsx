@@ -1,19 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import type { Categories, Products } from "../types/types";
+import Image from "next/image";
 
 interface onAddProductProp {
- onAddProduct?: (newProduct: Products) => void
+  onAddProduct?: (newProduct: Products) => void;
 }
 
 const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Categories[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     description: "",
     categoryId: 0,
+    image: null as File | null,
   });
 
   const handleModal = () => {
@@ -21,11 +24,12 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
   };
 
   const clearInputs = () => {
-    setIsOpen(false)
+    setIsOpen(false);
     setForm({
       name: "",
       description: "",
       categoryId: 0,
+      image: null,
     });
     setError(null);
   };
@@ -45,6 +49,19 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
     }
   }, [isOpen]);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setForm({ ...form, image: file });
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddProduct = async () => {
     try {
       const res = await fetch("api/products", {
@@ -54,12 +71,7 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
       });
       const data = await res.json();
       if (res.ok) {
-        setIsOpen(false);
-        setForm({
-          name: "",
-          description: "",
-          categoryId: 0,
-        });
+        clearInputs();
         onAddProduct?.(data);
       } else {
         setError(data.error);
@@ -137,6 +149,30 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
                 </select>
               </label>
             </div>
+
+            {/* Image Upload */}
+            <label className="flex flex-col gap-1 mt-4">
+              <span className="text-[#111418] font-medium">Product Image</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-base text-[#111418] focus:border-blue-500 focus:outline-none focus:ring-0"
+              />
+            </label>
+
+            {/* Image Preview */}
+            {
+              imagePreview && (
+                <div className="flex justify-center">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    className="max-w-full h-32 object-cover rounded-md border"
+                  />
+                </div>
+              )
+            }
 
             {/* Footer */}
             <div className="flex justify-end gap-2 mt-6">

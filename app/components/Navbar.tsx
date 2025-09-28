@@ -35,6 +35,7 @@ const Navbar = () => {
               <Link
                 key={link.id}
                 href={link.href}
+                prefetch={true}
                 className={`hover:text-blue-600 text-sm font-medium leading-normal
                   ${isActive(link.href) ? 'text-blue-600' : 'text-gray-600'}`
                 }

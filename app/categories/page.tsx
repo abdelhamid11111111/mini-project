@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import CategoryAdd from "../components/CategoryAdd";
 import CategoryUpdate from "../components/CategoryUpdate";
@@ -23,18 +23,18 @@ export default function Categories() {
     }
   }, []);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = useCallback(async (id: number) => {
     try {
       await fetch(`/api/categories/${id}`, {
         method: "DELETE",
       });
-      setCategories(categories.filter((category) => category.id !== id));
+      setCategories(prev => prev.filter((category) => category.id !== id));
     } catch (error) {
       console.error("error", error);
     }
-  };
+  }, []);
 
-  const handleCategoryUpdated = async (id: number, newName: string) => {
+  const handleCategoryUpdated = useCallback(async (id: number, newName: string) => {
     setCategories((prev) =>
       prev.map((category) =>
         category.id === id 
@@ -42,7 +42,7 @@ export default function Categories() {
           : category
       )
     );
-  };
+  }, []);
 
   const filteredCategories = categories.filter(category =>
   category.name.toLowerCase().includes(search.toLowerCase())
@@ -76,7 +76,7 @@ export default function Categories() {
               />
             </div>
             <CategoryAdd
-              onAddCategory={(newCategory) =>
+              onAddCategory={(newCategory) => 
                 setCategories((prev) => [newCategory, ...prev])
               }
             />

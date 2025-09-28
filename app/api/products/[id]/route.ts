@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { saveFile } from "@/lib/upload";
 
 export async function DELETE(
   req: NextRequest,
@@ -43,10 +44,24 @@ export async function GET(
 export async function PUT(req: Request, {params}: {params: Promise<{id: string}>}){
     try{
         const {id} = await params
-        const { form } = await req.json()
+        const formData = await req.formData()
+        const name = formData.get('name') as string
+        const description = formData.get('description') as string
+        const categoryId = formData.get('categoryId') as string
+        const image = formData.get('image') as File | null
 
-        if(!form || !form.name || !form.description || !form.categoryId){
+        if(!name || !description || !categoryId){
             return NextResponse.json({error: 'Please fill in all required field'}, {status: 400})
+        }
+
+        const currentProduct = await prisma.product.findUnique({
+          where: { id: Number(id) }
+        })
+
+        let imagePath = currentProduct?.image || ''
+
+        if(image && image.size > 0){
+          imagePath = await saveFile(image)
         }
 
         const ProductUpdated = await prisma.product.update({
@@ -54,10 +69,11 @@ export async function PUT(req: Request, {params}: {params: Promise<{id: string}>
                 id: Number(id) 
             },
             data: {
-                name: form.name.trim(),
-                description: form.description.trim(),
+                name: name.trim(),
+                description: description.trim(),
+                image: imagePath || null,
                 category: {
-                    connect: { id: parseInt(form.categoryId, 10) }
+                    connect: { id: parseInt(categoryId, 10) }
                 }
             },
             include: {
