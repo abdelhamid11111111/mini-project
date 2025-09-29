@@ -18,6 +18,7 @@ const ProductUpdate = ({ productId, UpdateProducts }: productIdProp) => {
     categoryId: 0,
     image: null as File | null,
   });
+  // get id form parent component to use it in routes
   const id = productId;
   const [error, setError] = useState<null | string>(null);
 
@@ -89,14 +90,14 @@ const ProductUpdate = ({ productId, UpdateProducts }: productIdProp) => {
 
       const res = await fetch(`/api/products/${id}`, {
         method: "PUT",
+        // don't use headers in FormData() case
         body: formData,
       });
       const data = await res.json();
       if (res.ok) {
         setIsOpen(false);
-        // if(UpdateProducts){
+        // put id and data needed into prop to display product immediately
         UpdateProducts?.(id, data);
-        // }
       } else {
         setError(data.error);
       }

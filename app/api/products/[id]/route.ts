@@ -43,7 +43,10 @@ export async function GET(
 
 export async function PUT(req: Request, {params}: {params: Promise<{id: string}>}){
     try{
+        // use params cuz we need dynamic root's value
         const {id} = await params
+
+        // use formDate() instead of json()
         const formData = await req.formData()
         const name = formData.get('name') as string
         const description = formData.get('description') as string
@@ -54,12 +57,15 @@ export async function PUT(req: Request, {params}: {params: Promise<{id: string}>
             return NextResponse.json({error: 'Please fill in all required field'}, {status: 400})
         }
 
+        // check if product already exist
         const currentProduct = await prisma.product.findUnique({
           where: { id: Number(id) }
         })
 
+        // use img of current as default value or empty string
         let imagePath = currentProduct?.image || ''
 
+        // check if image exist & is it hv size then save it in specific path
         if(image && image.size > 0){
           imagePath = await saveFile(image)
         }

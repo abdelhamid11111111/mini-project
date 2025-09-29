@@ -33,6 +33,7 @@ import { saveFile } from "@/lib/upload";
 
 export async function POST(req: Request){
     try{
+        // use formDate() instead of json()
         const formData = await req.formData()
         const name = formData.get('name') as string;
         const description = formData.get('description') as string;
@@ -44,6 +45,8 @@ export async function POST(req: Request){
         }
 
         let imagePath = ''
+        
+        // check if image exist & is it hv size then save it in specific path
         if(image && image.size > 0){
             imagePath = await saveFile(image) // get path from the func
         }

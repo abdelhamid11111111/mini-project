@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import ProductAdd from "../components/ProductAdd";
 import ProductUpdate from "../components/ProductUpdate";
 import type { Categories, Products } from "../types/types";
-import Image from "next/image";
 
 export default function Products() {
   const [selected, setSelected] = useState(-1);
@@ -12,6 +11,7 @@ export default function Products() {
   const [filtered, setFiltered] = useState<Products[]>([]);
   const [products, setProducts] = useState<Products[]>([]);
 
+  // fetch categories
   useEffect(() => {
     try {
       const fetchCategories = async () => {
@@ -25,6 +25,7 @@ export default function Products() {
     }
   }, []);
 
+  // fetch products
   useEffect(() => {
     try {
       const fetchProducts = async () => {
@@ -39,6 +40,7 @@ export default function Products() {
     }
   }, []);
 
+  // delete product in both states
   const handleDelete = useCallback(async (id: number) => {
     try {
       await fetch(`/api/products/${id}`, {
@@ -51,6 +53,7 @@ export default function Products() {
     }
   }, []);
 
+  // those states is where product should upload to display immediately
   const handleUpdateProducts = useCallback(
     async (id: number, updatedProduct: Products) => {
       setFiltered((prev) =>

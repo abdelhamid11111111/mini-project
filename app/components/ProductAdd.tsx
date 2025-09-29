@@ -55,7 +55,7 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
     if (file) {
       // if file exists put it in array
       setForm({ ...form, image: file }); 
-      
+
       // to read the contents of files
       const reader = new FileReader();
 
@@ -165,7 +165,7 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
               </label>
             </div>
 
-            {/* Image Upload */}
+            {/* Image Input Upload */}
             <label className="flex flex-col gap-1 mt-4">
               <span className="text-[#111418] font-medium">Product Image</span>
               <input

@@ -6,7 +6,7 @@ export async function saveFile(file: File): Promise<string> {
   // get file from browser as binary form
   const bytes = await file.arrayBuffer();
 
-  // convert file from binary form into node js friendly
+  // convert file from binary form to be node js friendly
   const buffer = Buffer.from(bytes);
   
   // Generate unique filename
