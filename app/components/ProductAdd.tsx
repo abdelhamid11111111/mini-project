@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import type { Categories, Products } from "../types/types";
-import Image from "next/image";
 
 interface onAddProductProp {
   onAddProduct?: (newProduct: Products) => void;
@@ -31,6 +30,7 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
       categoryId: 0,
       image: null,
     });
+    setImagePreview(null);
     setError(null);
   };
 
@@ -49,25 +49,38 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
     }
   }, [isOpen]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
+    // Pick the pic(file) 
+    const file = e.target.files?.[0];  
     if (file) {
-      setForm({ ...form, image: file });
-
+      // if file exists put it in array
+      setForm({ ...form, image: file }); 
+      
+      // to read the contents of files
       const reader = new FileReader();
-      reader.onload = (e) => {
+
+      // runs when the file has been successfully read
+      reader.onload = (e) => { 
         setImagePreview(e.target?.result as string);
       };
+      // reads file and converts it into a base64-encoded Data URL (to allow for the browser to understand it)
       reader.readAsDataURL(file);
     }
   };
 
   const handleAddProduct = async () => {
     try {
-      const res = await fetch("api/products", {
+      const formData = new FormData();
+      formData.append('name', form.name)
+      formData.append('description', form.description)
+      formData.append('categoryId', form.categoryId.toString())
+      if(form.image){
+        formData.append('image', form.image)
+      }
+
+      const res = await fetch("/api/products", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ form }),
+        body: formData,
       });
       const data = await res.json();
       if (res.ok) {
@@ -78,7 +91,9 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
       }
     } catch (error) {
       console.error("server error", error);
-      setError(error as string);
+      setError(
+        error instanceof Error ? error.message : "Network error occurred"
+      );
     }
   };
 
@@ -162,17 +177,15 @@ const ProductAdd = ({ onAddProduct }: onAddProductProp) => {
             </label>
 
             {/* Image Preview */}
-            {
-              imagePreview && (
-                <div className="flex justify-center">
-                  <Image
-                    src={imagePreview}
-                    alt="Preview"
-                    className="max-w-full h-32 object-cover rounded-md border"
-                  />
-                </div>
-              )
-            }
+            {imagePreview && (
+              <div className="flex mt-4 justify-center">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="max-w-full h-32 object-cover rounded-md border"
+                />
+              </div>
+            )}
 
             {/* Footer */}
             <div className="flex justify-end gap-2 mt-6">

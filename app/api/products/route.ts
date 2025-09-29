@@ -43,16 +43,16 @@ export async function POST(req: Request){
             return NextResponse.json({error: 'Please fill in all required field'}, {status: 400})
         }
 
-        let imagePath = '';
+        let imagePath = ''
         if(image && image.size > 0){
-            imagePath = await saveFile(image)
+            imagePath = await saveFile(image) // get path from the func
         }
 
         const ProductCreated = await prisma.product.create({
             data: {
                 name: name.trim(),
                 description: description.trim(),
-                image: imagePath || null,
+                image: imagePath || null, // should create it as path
                 category: {
                     connect: { id: parseInt(categoryId, 10) }
                 }
