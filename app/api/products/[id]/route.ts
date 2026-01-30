@@ -89,6 +89,6 @@ export async function PUT(req: Request, {params}: {params: Promise<{id: string}>
         return NextResponse.json(ProductUpdated, {status: 201})
     } catch(error){
         console.error('server error', error);
-        return NextResponse.json({error: 'server error POST'}, {status: 500})
+        return NextResponse.json({error: 'server error PUT'}, {status: 500})
     }
 }

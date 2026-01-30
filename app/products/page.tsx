@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import ProductAdd from "../components/ProductAdd";
 import ProductUpdate from "../components/ProductUpdate";
 import type { Categories, Products } from "../types/types";
+import DeleteModal from "../components/DeleteModal";
 
 export default function Products() {
   const [selected, setSelected] = useState(-1);
@@ -40,35 +41,33 @@ export default function Products() {
     }
   }, []);
 
-  // delete product in both states
-  const handleDelete = useCallback(async (id: number) => {
-    try {
-      await fetch(`/api/products/${id}`, {
-        method: "DELETE",
-      });
-      setProducts((prev) => prev.filter((category) => category.id !== id));
-      setFiltered((prev) => prev.filter((category) => category.id !== id));
-    } catch (error) {
-      console.error("server error", error);
-    }
-  }, []);
 
-  // those states is where product should upload to display immediately
+  // those states is where product should delete to disappear immediately
+  const handleDeleteProducts = useCallback(
+    async (id: number) => {
+
+      setFiltered((prev) => prev.filter((product) => product.id !== id))
+      setProducts((prev) => prev.filter((product) => product.id !== id))
+    },
+    [],
+  );
+
+  // those states is where product should update to display immediately
   const handleUpdateProducts = useCallback(
     async (id: number, updatedProduct: Products) => {
       setFiltered((prev) =>
         prev.map((product) =>
-          product.id === id ? { ...product, ...updatedProduct } : product
-        )
+          product.id === id ? { ...product, ...updatedProduct } : product,
+        ),
       );
 
       setProducts((prev) =>
         prev.map((product) =>
-          product.id === id ? { ...product, ...updatedProduct } : product
-        )
+          product.id === id ? { ...product, ...updatedProduct } : product,
+        ),
       );
     },
-    [setFiltered, setProducts]
+    [setFiltered, setProducts],
   );
 
   const handleFilter = useCallback(
@@ -78,11 +77,11 @@ export default function Products() {
         setFiltered(products);
       } else {
         setFiltered(
-          products.filter((product) => product.categoryId === category.id)
+          products.filter((product) => product.categoryId === category.id),
         );
       }
     },
-    [products]
+    [products],
   );
 
   return (
@@ -225,14 +224,17 @@ export default function Products() {
                         <div className="flex items-center gap-3">
                           <ProductUpdate
                             productId={product.id}
+                            productName={product.name}
+                            productDesc={product.description}
+                            productImg={product.image}
+                            productCategory={product.category?.id}
                             UpdateProducts={handleUpdateProducts}
                           />
-                          <button
-                            onClick={() => handleDelete(product.id)}
-                            className="text-red-600 hover:text-red-800 transition-colors font-medium"
-                          >
-                            Delete
-                          </button>
+                          <DeleteModal
+                            productName={product.name}
+                            productId={product.id}
+                            DeleteProducts={handleDeleteProducts}
+                          />
                         </div>
                       </td>
                     </tr>

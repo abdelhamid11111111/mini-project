@@ -3,28 +3,36 @@ import React, { useState, useEffect } from "react";
 import { Categories, Products } from "../types/types";
 
 interface productIdProp {
+  productName: string;
+  productDesc: string;
+  productCategory: number
+  productImg: string | undefined
   productId: number;
   UpdateProducts: (id: number, updatedProduct: Products) => void;
 }
 
-const ProductUpdate = ({ productId, UpdateProducts }: productIdProp) => {
+const ProductUpdate = ({ productId, UpdateProducts, productName, productDesc, productCategory, productImg }: productIdProp) => {
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Categories[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [currentImagePath, setCurrentImagePath] = useState<string | null>(null);
+  const [currentImagePath, setCurrentImagePath] = useState<string | null>(productImg || null);
   const [form, setForm] = useState({
-    name: "",
-    description: "",
-    categoryId: 0,
+    name: productName,
+    description: productDesc,
+    categoryId: productCategory?.toString() || "",
     image: null as File | null,
   });
+  const [error, setError] = useState<null | string>(null);
+
+
   // get id form parent component to use it in routes
   const id = productId;
-  const [error, setError] = useState<null | string>(null);
+  
 
   const handleModal = () => {
     setIsOpen(!isOpen);
     setError(null);
+    setImagePreview(null); // Reset preview when loading existing data
   };
 
   useEffect(() => {
@@ -42,27 +50,26 @@ const ProductUpdate = ({ productId, UpdateProducts }: productIdProp) => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    try {
-      const fetchProducts = async () => {
-        const res = await fetch(`/api/products/${id}`);
-        const data = await res.json();
-        setForm({
-          name: data.name,
-          description: data.description,
-          categoryId: data.categoryId,
-          image: null,
-        });
-        setCurrentImagePath(data.image); // Store current image path separately
-        setImagePreview(null); // Reset preview when loading existing data
-      };
-      if (isOpen) {
-        fetchProducts();
-      }
-    } catch (error) {
-      console.error("server error", error);
-    }
-  }, [id, isOpen]);
+  // useEffect(() => {
+  //   try {
+  //     const fetchProducts = async () => {
+  //       const res = await fetch(`/api/products/${id}`);
+  //       const data = await res.json();
+  //       setForm({
+  //         name: data.name,
+  //         description: data.description,
+  //         categoryId: data.categoryId,
+  //         image: null,
+  //       });
+  //       setCurrentImagePath(data.image); // Store current image path separately
+  //     };
+  //     if (isOpen) {
+  //       fetchProducts();
+  //     }
+  //   } catch (error) {
+  //     console.error("server error", error);
+  //   }
+  // }, [id, isOpen]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -174,9 +181,9 @@ const ProductUpdate = ({ productId, UpdateProducts }: productIdProp) => {
                 <label className="flex flex-col gap-1">
                   <span className="text-[#111418] font-medium">Category</span>
                   <select
-                    value={form.categoryId}
+                    value={form.categoryId.toString()}
                     onChange={(e) =>
-                      setForm({ ...form, categoryId: Number(e.target.value) })
+                      setForm({ ...form, categoryId: e.target.value })
                     }
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-base text-[#111418] focus:border-blue-500 focus:outline-none focus:ring-0"
                   >
