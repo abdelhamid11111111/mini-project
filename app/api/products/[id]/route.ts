@@ -20,26 +20,26 @@ export async function DELETE(
   }
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const fetchProduct = await prisma.product.findUnique({
-      where: {
-        id: Number(id),
-      },
-      include: {
-        category: true,
-      },
-    });
-    return NextResponse.json(fetchProduct, { status: 200 });
-  } catch (error) {
-    console.error("sever error", error);
-    return NextResponse.json({ error: "server error GET" }, { status: 500 });
-  }
-}
+// export async function GET(
+//   req: NextRequest,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   try {
+//     const { id } = await params;
+//     const fetchProduct = await prisma.product.findUnique({
+//       where: {
+//         id: Number(id),
+//       },
+//       include: {
+//         category: true,
+//       },
+//     });
+//     return NextResponse.json(fetchProduct, { status: 200 });
+//   } catch (error) {
+//     console.error("sever error", error);
+//     return NextResponse.json({ error: "server error GET" }, { status: 500 });
+//   }
+// }
 
 export async function PUT(req: Request, {params}: {params: Promise<{id: string}>}){
     try{
