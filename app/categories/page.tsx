@@ -108,6 +108,7 @@ export default function Categories() {
                       <div className="flex items-center gap-4">
                         <CategoryUpdate
                           CategoryId={category.id}
+                          CategoryName={category.name}
                           updateCategories={handleCategoryUpdated}
                         />
                         <button

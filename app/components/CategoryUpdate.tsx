@@ -3,30 +3,16 @@ import React, { useState, useEffect } from "react";
 
 interface CategoryIdProp {
   CategoryId: number;
+  CategoryName: string;
   updateCategories?: (id: number, newName: string) => void
 }
 
-const CategoryUpdate = ({ CategoryId, updateCategories }: CategoryIdProp) => {
+const CategoryUpdate = ({ CategoryId, updateCategories, CategoryName }: CategoryIdProp) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryName, setCategoryName] = useState(CategoryName);
   const [error, setError] = useState<null | string>(null);
 
   const id = CategoryId;
-
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const res = await fetch(`/api/categories/${id}`);
-        const data = await res.json();
-        setCategoryName(data?.name || "");
-      };
-      if (isOpen) {
-        fetchData();
-      }
-    } catch (error) {
-      console.error("error", error);
-    }
-  }, [id, isOpen]);
 
   const handleModal = () => {
     setIsOpen(!isOpen);
