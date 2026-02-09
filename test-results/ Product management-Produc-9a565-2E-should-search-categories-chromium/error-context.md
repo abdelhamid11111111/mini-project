@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e4]:
+      - navigation [ref=e6]:
+        - link "Products" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - link "Categories" [ref=e8] [cursor=pointer]:
+          - /url: /categories
+    - main [ref=e9]:
+      - generic [ref=e10]:
+        - heading "My Categories" [level=1] [ref=e12]
+        - generic [ref=e13]:
+          - textbox "search for category..." [active] [ref=e15]: Searchable
+          - generic [ref=e16]:
+            - button "Add Category" [ref=e17]:
+              - generic [ref=e18]: Add Category
+            - generic [ref=e20]:
+              - heading "Add Category" [level=2] [ref=e22]
+              - generic [ref=e23]: This category already exist
+              - generic [ref=e25]:
+                - generic [ref=e26]: Category Name
+                - textbox "Category Name" [ref=e27]:
+                  - /placeholder: Enter category name
+                  - text: Searchable Category
+              - generic [ref=e28]:
+                - button "Cancel" [ref=e29]
+                - button "Add Category" [ref=e30]
+        - table [ref=e32]:
+          - rowgroup [ref=e33]:
+            - row "Name Actions" [ref=e34]:
+              - columnheader "Name" [ref=e35]
+              - columnheader "Actions" [ref=e36]
+          - rowgroup [ref=e37]:
+            - row "Searchable Category Edit Delete" [ref=e38]:
+              - cell "Searchable Category" [ref=e39]
+              - cell "Edit Delete" [ref=e40]:
+                - generic [ref=e41]:
+                  - button "Edit" [ref=e43]
+                  - button "Delete" [ref=e44]
+  - button "Open Next.js Dev Tools" [ref=e50] [cursor=pointer]:
+    - img [ref=e51]
+  - alert [ref=e54]
+```

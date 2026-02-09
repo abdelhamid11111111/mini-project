@@ -41,7 +41,7 @@ export async function DELETE(
 //   }
 // }
 
-export async function PUT(req: Request, {params}: {params: Promise<{id: string}>}){
+export async function PUT(req: NextRequest, {params}: {params: Promise<{id: string}>}){
     try{
         // use params cuz we need dynamic root's value
         const {id} = await params

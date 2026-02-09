@@ -63,7 +63,7 @@ test.describe('Product Management E2E', () => {
     
     // Verify update
     await expect(page.locator('text=Updated E2E Product').first()).toBeVisible();
-    await expect(page.locator('text=E2E Test Product')).not.toBeVisible();
+    await expect(page.locator('text=E2E Test Product')).toHaveCount(0);
 
     // 4. DELETE PRODUCT
     const updatedProductRow = page.locator('tr:has-text("Updated E2E Product")').first();
@@ -95,7 +95,7 @@ test.describe('Product Management E2E', () => {
     
     // Force click submit button
     await page.locator('button:has-text("Add Category")').last().click({ force: true });
-    await page.waitForTimeout(1000);
+    await expect(page.locator('text=E2E Test Category')).toBeVisible(); 
     
     // Use the search
     await page.fill('input[placeholder*="search for category"]', 'Searchable');

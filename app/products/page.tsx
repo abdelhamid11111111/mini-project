@@ -67,7 +67,7 @@ export default function Products() {
   // initial fetch, if user refresh always load first page
   useEffect(() => {
     fetchProducts(1, selectedCategory);
-  }, [fetchProducts, selectedCategory]);
+  }, [fetchProducts]);
 
   // function for verify is page number is valid
   const goToPage = (page: number) => {
